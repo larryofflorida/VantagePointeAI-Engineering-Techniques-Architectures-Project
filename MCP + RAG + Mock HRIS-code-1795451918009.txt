@@ -1,0 +1,42 @@
++-----------------------------------------------------------------------------+
+|                                  WEB APP                                    |
+|  - Chat UI, policy citations viewer, confirmation gate prompts, eval runner  |
++--------------------------------------+--------------------------------------+
+                                       | HTTPS / WebSocket / SSE
+                                       v
++-----------------------------------------------------------------------------+
+|                             AGENT ORCHESTRATOR                              |
+|  - Session & conversation state management                                  |
+|  - Guardrails: ambiguity check, RBAC/privacy check, write confirmation gate  |
+|  - Prompt assembly, tool-call loop, ablation & metric logging               |
++------------------+----------------------------------------+-----------------+
+                   |                                        |
+  Inference API    |                                        | Tool calls
+  (chat/tools)     v                                        v
++------------------+------------------+  MCP protocol   +--------------------+
+|            LLM PROVIDER             |  (stdio/HTTP)   |     MCP CLIENT     |
+|  - Policy reasoning & synthesis     |<--------------->|  - Discovers tools |
+|  - Tool selection & JSON arguments  |                 |  - Routes & validates|
++-------------------------------------+                 |    MCP requests    |
+                                                        +---------+----------+
+                                                                  |
+                         +----------------------------------------+----------------------------------------+
+                         |                                        |                                        |
+                         v                                        v                                        v
+        +----------------+----------------+      +----------------+----------------+      +----------------+----------------+
+        |    MCP SERVER 1: POLICY RAG     |      |     MCP SERVER 2: HRIS & PTO    |      |  MCP SERVER 3: TICKETS & IT     |
+        |  - Exposes `policy.search`      |      |  - `hris.get_pto_balance`       |      |  - `tickets.create_approval_req`|
+        |  - Runs hybrid/vector retrieval |      |  - `hris.get_employee_profile`|      |  - `it_portal.order_accessory`  |
+        +----------------+----------------+      |  - `hris.get_reporting_chain` |      |  - `comms.send_notification`    |
+                         |                       |  - `hris.get_address/location`|      +----------------+----------------+
+                         |                       |  - `pto.submit_request`         |                       |
+                         |                       |  - `calendar.get_*_holidays`    |                       |
+                         v                       +----------------+----------------+                       |
+        +----------------+----------------+                               |                                |
+        |           RAG INDEX             |                               v                                v
+        |  - Chunked markdown HR policies |              +-----------------------------------------------------------------+
+        |  - Embeddings + metadata tags   |              |                      MOCK STRUCTURED DATA                       |
+        |    (doc name, region, role)     |              |  - Employee profiles, tenure, FLSA status, manager/director IDs |
+        +---------------------------------+              |  - PTO & sick leave balances, holiday calendars by region        |
+                                                       |  - Shipping addresses, open approval/life-event/IT ticket state |
+                                                       +-----------------------------------------------------------------+
