@@ -1,0 +1,10 @@
+﻿Dataset Schema & Policy Alignment,,,
+,,,
+Every record is 100% synthetic (using @vantagepoint.example.com addresses and fictional identities) and is cross-referenced against the exact rules in the VantagePoint Technologies Inc. PDF policy corpus:,,,
+,,,
+Dataset,Records,Primary Keys & Foreign Keys,Policy Rules Modeled
+office_locations,5,location_id,"Hub anchor days (Tue/Thu), geographic compensation zones (Zone 1–3), hotel tier caps ($375 / $275 / $210), and $75/mo transit subsidies (POL-HR-003, POL-FIN-001, POL-BEN-001)"
+employees,13,"employee_id, manager_id, location_id, onboarding_buddy_id","Multi-tier reporting tree (EMP-1001 through EMP-1013), Exempt vs. Non-Exempt, Part-Time, Paid Intern, 90-day intro period, and laptop hardware tracks (POL-HR-001, POL-IT-001)"
+pto_balances,13,employee_id,"Tenure accrual rates (4.62 / 6.15 / 7.69 hrs/paycheck), state non-forfeiture rollover rules (CA/CO vs. standard caps), prorated part-time PTO, floating holidays, VTO, and domestic/international WFA usage (POL-HR-002, POL-HR-003)"
+benefits_elections,13,employee_id,"First-of-month-following coverage start dates, Aetna HDHP/PPO vs. Kaiser CA/WA plans, HSA company seed ($1k/$2k), 401(k) auto-enrollment & 2-year vesting (0% / 50% / 100%), and remaining wellness/L&D stipends (POL-BEN-001)"
+support_tickets,10,"ticket_id, requester_id, assignee_id, related_policy_id","Realistic employee Q&A and edge-case resolutions (e.g., rejected espresso machine under $1,000 WFH stipend, Lisbon international WFA clearance, NYC conference hotel cap exception, stolen laptop 2-hr SLA, CA daily overtime, vendor gift card rejection, and 5-year sabbatical scheduling)"
