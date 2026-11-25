@@ -6,7 +6,7 @@ It has three parts:
 
 1. **A document pipeline** that converts ten policy PDFs into clean markdown and splits them into 73 section-level chunks with metadata.
 2. **A mock HRIS dataset** (13 employees, PTO balances, benefits elections, offices, support tickets) used to personalize answers.
-3. **A single-file web assistant** that retrieves relevant policy passages, adds the signed-in employee's record, and (when Claude is available) generates a cited answer.
+3. **A single-file web assistant** that retrieves relevant policy passages, adds the signed-in employee's record, and generates a cited answer.
 
 > All people, numbers and policies are fictional. The dataset is meant for policy Q&A and RAG testing, not for real HR decisions.
 
@@ -25,8 +25,8 @@ assistant/template.html ───────────────► scripts
 
 In the browser:  question ─► BM25 search over chunks ─► top 6 passages
                                    + selected employee's HRIS record
-                                   ─► Claude (answer with [POL-XXX §n] citations)
-                                   └► fallback: show the best passages if Claude is unavailable
+                                   ─► Vantage (answer with [POL-XXX §n] citations)
+                                   └► fallback: show the best passages 
 ```
 
 Design points:
@@ -109,7 +109,7 @@ python -m http.server 8000
 
 ### What works locally
 
-Outside Claude, the page runs in **retrieval-only mode**. Pick an employee, ask a question, and you get the top-matching policy passages. The Policy library tab also works fully. The footer line on the Assistant tab shows which mode is active.
+Outside Vantage, the page runs in **retrieval-only mode**. Pick an employee, ask a question, and you get the top-matching policy passages. The Policy library tab also works fully. The footer line on the Assistant tab shows which mode is active.
 
 Generated, cited answers need an LLM behind the page. See Deployment below. For quick local retrieval checks, the passages and the "Retrieved passages" list under each answer show whether the right sections are being found.
 
@@ -120,7 +120,7 @@ Generated, cited answers need an LLM behind the page. See Deployment below. For 
 #
 
 1. Build the file (`python scripts/build_assistant.py`).
-2. Publish `assistant/vantagepoint_hr_assistant.html` as an artifact, declaring the `sample` capability (`capabilities: {"sample": {}}`). The page calls `vantage.use("sample")` to ask Claude, and the viewer approves a one-time consent prompt on first use.
+2. Publish `assistant/vantagepoint_hr_assistant.html` as an artifact, declaring the `sample` capability (`capabilities: {"sample": {}}`). The page calls `vantage.use("sample")` .
 3. The artifact is private to you until you share it.
 
 Limits: answers depend on the viewer's access and, and the HRIS snapshot ships inside the page, so only share the artifact with people who may see that data. That is fine for synthetic data and not for real data.
@@ -183,7 +183,7 @@ These are preserved as written, since the assistant is meant to cope with them:
 
 | Symptom | Likely cause / fix |
 |---|---|
-| Footer says "retrieval only" | Expected outside Claude; see Deployment A or C for generated answers |
+| Footer says "retrieval only" |  see Deployment A or C for generated answers |
 | Answer cites the wrong section | Check the "Retrieved passages" list; add a synonym or raise the passage count |
 | Table cells look clipped after conversion | The source PDF clips them; `convert.py` recovers them. If you add new PDFs, check tables in `markdown/` and add a `FIXUPS` entry if columns merged |
 | `ModuleNotFoundError: pdfplumber` | Activate the venv and run `pip install -r requirements.txt` |
