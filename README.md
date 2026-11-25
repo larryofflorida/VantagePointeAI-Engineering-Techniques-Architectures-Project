@@ -117,20 +117,17 @@ Generated, cited answers need an LLM behind the page. See Deployment below. For 
 
 ## Deployment
 
-### A. Publish as a Claude artifact (what the prototype uses)
-
-This is the fastest route, and it gives you generated answers with no backend.
+#
 
 1. Build the file (`python scripts/build_assistant.py`).
-2. In Claude, publish `assistant/vantagepoint_hr_assistant.html` as an artifact, declaring the `sample` capability (`capabilities: {"sample": {}}`). The page calls `claude.use("sample")` to ask Claude, and the viewer approves a one-time consent prompt on first use.
-3. The artifact is private to you until you share it. Anyone who opens it needs access to claude.ai.
+2. Publish `assistant/vantagepoint_hr_assistant.html` as an artifact, declaring the `sample` capability (`capabilities: {"sample": {}}`). The page calls `vantage.use("sample")` to ask Claude, and the viewer approves a one-time consent prompt on first use.
+3. The artifact is private to you until you share it.
 
-Limits: answers depend on the viewer's Claude access and rate limits, and the HRIS snapshot ships inside the page, so only share the artifact with people who may see that data. That is fine for synthetic data and not for real data.
+Limits: answers depend on the viewer's access and, and the HRIS snapshot ships inside the page, so only share the artifact with people who may see that data. That is fine for synthetic data and not for real data.
 
 ### B. Any static host (retrieval-only)
 
-Upload `assistant/vantagepoint_hr_assistant.html` to GitHub Pages, S3 + CloudFront, Netlify, Cloudflare Pages or an internal web server. It works as a policy search tool with an employee-context card but does not generate answers, because the `claude` global does not exist there. It makes no network calls, so there is nothing to configure.
-
+Upload `assistant/vantagepoint_hr_assistant.html` to GitHub Pages, S3 + CloudFront, Netlify, Cloudflare Pages or an internal web server. It works as a policy search tool with an employee-context card.
 ### C. Production: your own backend and LLM
 
 Do not ship real HRIS data to the browser, and do not call a model from client code with a secret key. For real use, move retrieval and prompting behind an API:
